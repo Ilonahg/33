@@ -52,14 +52,14 @@ class TestCategory(unittest.TestCase):
         p2 = Product("Товар 2", "Описание 2", 200, 5)
         category = Category("Категория 1", "Описание категории", [p1, p2])
         self.assertEqual(category.name, "Категория 1")
-        self.assertEqual(category.product_count, 2)  # Теперь будет 2, так как мы передаем 2 продукта
+        self.assertEqual(category.product_count, 2)
 
     def test_add_product(self):
         p1 = Product("Товар 1", "Описание 1", 100, 10)
         category = Category("Категория 1", "Описание категории", [p1])
         p2 = Product("Товар 2", "Описание 2", 200, 5)
         category.add_product(p2)
-        self.assertEqual(category.product_count, 2)  # После добавления второго продукта
+        self.assertEqual(category.product_count, 2)
 
     def test_add_invalid_product(self):
         category = Category("Категория 1", "Описание категории", [])
