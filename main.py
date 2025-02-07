@@ -62,6 +62,10 @@ class Product(PrinterMixin, BaseProduct):
             return self.price * self.quantity + other.price * other.quantity
         raise TypeError("Операция поддерживается только для объектов класса Product")
 
+    @classmethod
+    def new_product(cls, name, description, price, quantity):
+        return cls(name, description, price, quantity)
+
 
 # Класс Smartphone, наследующий от Product
 class Smartphone(Product):
@@ -93,28 +97,28 @@ class Category:
     def __init__(self, name: str, description: str, products: list):
         self.name = name
         self.description = description
-        self._products = products
+        self.__products = products  # Приватный атрибут для списка продуктов
 
     def add_product(self, product: Product):
         if not isinstance(product, Product):
             raise TypeError("Можно добавить только объект класса Product или его наследников")
-        self._products.append(product)
+        self.__products.append(product)
 
     @property
     def product_count(self):
-        return len(self._products)
+        return len(self.__products)
 
     @property
     def products(self):
-        return "\n".join([str(product) for product in self._products]) + "\n"
+        return "\n".join([str(product) for product in self.__products]) + "\n"
 
     def __str__(self):
-        total_quantity = sum(product.quantity for product in self._products)
+        total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
 
     # Добавление метода для вычисления средней цены
     def average_price(self):
-        if len(self._products) == 0:
+        if len(self.__products) == 0:
             return 0
-        total_price = sum(product.price for product in self._products)
-        return total_price / len(self._products)
+        total_price = sum(product.price for product in self.__products)
+        return total_price / len(self.__products)
