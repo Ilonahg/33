@@ -10,3 +10,6 @@ __pycache__/
 
 # Файл зависимостей poetry
 poetry.lock
+
+builtins.pyi
+**/wait.py

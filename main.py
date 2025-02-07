@@ -2,34 +2,30 @@ class Product:
     def __init__(self, name: str, description: str, price: float, quantity: int):
         self.name = name
         self.description = description
-        self._price = price  # Приватный атрибут для цены
-        self._quantity = quantity  # Приватный атрибут для количества
+        self._price = price
+        self._quantity = quantity
 
     @property
     def price(self):
-        """Геттер для цены."""
         return self._price
 
     @price.setter
     def price(self, value):
-        """Сеттер для цены с проверкой на положительное значение."""
         if value > 0:
             self._price = value
         else:
-            print("Цена не должна быть нулевая или отрицательная")
+            raise ValueError("Цена не должна быть нулевая или отрицательная")
 
     @property
     def quantity(self):
-        """Геттер для количества."""
         return self._quantity
 
     @quantity.setter
     def quantity(self, value):
-        """Сеттер для количества."""
         if value >= 0:
             self._quantity = value
         else:
-            print("Количество не может быть отрицательным")
+            raise ValueError("Количество не может быть отрицательным")
 
     def __str__(self):
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
@@ -40,38 +36,44 @@ class Product:
         raise TypeError("Операция поддерживается только для объектов класса Product")
 
 
-class Category:
-    category_count = 0  # Количество категорий
-    product_count = 0  # Количество товаров во всех категориях
+class Smartphone(Product):
+    def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
 
+    def __str__(self):
+        return f"{self.name} ({self.model}), {self.memory}GB, {self.color}, {self.price} руб. Остаток: {self.quantity} шт."
+
+
+class LawnGrass(Product):
+    def __init__(self, name, description, price, quantity, country, germination_period, color):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+
+class Category:
     def __init__(self, name: str, description: str, products: list):
         self.name = name
         self.description = description
-        self._products = products  # Приватный атрибут для списка продуктов
-
-        # Увеличиваем количество категорий
-        Category.category_count += 1
-
-        # Увеличиваем количество продуктов, добавленных в эту категорию
-        Category.product_count += len(products)
-
-    @classmethod
-    def reset(cls):
-        """Метод для сброса счетчиков категорий и продуктов."""
-        cls.category_count = 0
-        cls.product_count = 0
+        self._products = products
 
     def add_product(self, product: Product):
-        """Метод для добавления продукта в категорию."""
+        if not isinstance(product, (Product, Smartphone, LawnGrass)):
+            raise TypeError("Можно добавить только объект класса Product или его наследников")
         self._products.append(product)
-        Category.product_count += 1
+
+    @property
+    def product_count(self):
+        return len(self._products)
 
     @property
     def products(self):
-        """Геттер для списка продуктов."""
-        return "\n".join(
-            [str(product) for product in self._products]
-        ) + "\n"  # Добавляем '\n' в конце
+        return "\n".join([str(product) for product in self._products]) + "\n"
 
     def __str__(self):
         total_quantity = sum(product.quantity for product in self._products)

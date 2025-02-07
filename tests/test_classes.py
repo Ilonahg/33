@@ -1,75 +1,71 @@
-import pytest
-from main import Product, Category
+import unittest
+from main import Product, Smartphone, LawnGrass, Category
 
 
-@pytest.fixture(autouse=True)
-def reset_category_and_product_count():
-    """Фикстура для сброса счетчиков перед каждым тестом."""
-    Category.reset()
+class TestProduct(unittest.TestCase):
+
+    def test_product_creation(self):
+        p = Product("Товар", "Описание товара", 100, 10)
+        self.assertEqual(p.name, "Товар")
+        self.assertEqual(p.price, 100)
+        self.assertEqual(p.quantity, 10)
+
+    def test_price_setter(self):
+        p = Product("Товар", "Описание товара", 100, 10)
+        p.price = 120
+        self.assertEqual(p.price, 120)
+
+        with self.assertRaises(ValueError):
+            p.price = -10
+
+    def test_quantity_setter(self):
+        p = Product("Товар", "Описание товара", 100, 10)
+        p.quantity = 5
+        self.assertEqual(p.quantity, 5)
+
+        with self.assertRaises(ValueError):
+            p.quantity = -5
+
+    def test_product_addition(self):
+        p1 = Product("Товар 1", "Описание 1", 100, 10)
+        p2 = Product("Товар 2", "Описание 2", 200, 5)
+        self.assertEqual(p1 + p2, 2000)  # (100*10 + 200*5), теперь 2000
 
 
-def test_count_products_and_categories():
-    # Создаем продукты
-    product1 = Product(
-        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
-    )
-    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+class TestSmartphone(unittest.TestCase):
 
-    # Создаем первую категорию с продуктами
-    category = Category("Смартфоны", "Описание категории смартфонов", [product1, product2])
+    def test_smartphone_creation(self):
+        s = Smartphone("Телефон", "Модный смартфон", 1000, 10, "5G", "Model X", 128, "Черный")
+        self.assertEqual(s.model, "Model X")
+        self.assertEqual(s.memory, 128)
+        self.assertEqual(s.color, "Черный")
 
-    # Проверка на количество категорий и товаров
-    assert Category.category_count == 1  # Ожидается 1 категория
-    assert Category.product_count == 2  # Ожидается 2 продукта в системе
+    def test_smartphone_str(self):
+        s = Smartphone("Телефон", "Модный смартфон", 1000, 10, "5G", "Model X", 128, "Черный")
+        self.assertEqual(str(s), "Телефон (Model X), 128GB, Черный, 1000 руб. Остаток: 10 шт.")
 
 
-def test_category_and_product_count():
-    # Создаем продукты
-    product1 = Product(
-        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
-    )
-    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+class TestCategory(unittest.TestCase):
 
-    # Создаем первую категорию с продуктами
-    category1 = Category(
-        "Смартфоны",
-        "Смартфоны, как средство не только коммуникации, но и получения "
-        "дополнительных функций для удобства жизни",
-        [product1, product2],
-    )
+    def test_category_creation(self):
+        p1 = Product("Товар 1", "Описание 1", 100, 10)
+        p2 = Product("Товар 2", "Описание 2", 200, 5)
+        category = Category("Категория 1", "Описание категории", [p1, p2])
+        self.assertEqual(category.name, "Категория 1")
+        self.assertEqual(category.product_count, 2)  # Теперь будет 2, так как мы передаем 2 продукта
 
-    # Создаем вторую категорию и продукты
-    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
-    category2 = Category("Телевизоры", "Современный телевизор, который позволяет наслаждаться "
-                           "просмотром", [product3])
+    def test_add_product(self):
+        p1 = Product("Товар 1", "Описание 1", 100, 10)
+        category = Category("Категория 1", "Описание категории", [p1])
+        p2 = Product("Товар 2", "Описание 2", 200, 5)
+        category.add_product(p2)
+        self.assertEqual(category.product_count, 2)  # После добавления второго продукта
 
-    # Проверка общего количества категорий и продуктов
-    assert Category.category_count == 2  # Ожидается 2 категории
-    assert Category.product_count == 3  # Ожидается 3 продукта в системе
+    def test_add_invalid_product(self):
+        category = Category("Категория 1", "Описание категории", [])
+        with self.assertRaises(TypeError):
+            category.add_product("Не продукт")  # Попытка добавить строку вместо объекта Product
 
 
-def test_getter_products():
-    product1 = Product("Samsung Galaxy S23", "256GB, Серый цвет", 150000, 5)
-    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-
-    # Создаем категорию с продуктами
-    category = Category("Смартфоны", "Мобильные телефоны", [product1, product2])
-
-    # Проверяем работу геттера
-    expected_products = (
-        "Samsung Galaxy S23, 150000 руб. Остаток: 5 шт.\n"
-        "Iphone 15, 210000.0 руб. Остаток: 8 шт.\n"
-    )
-    assert category.products == expected_products
-
-
-def test_addition_of_products():
-    # Создаем два продукта
-    product1 = Product("Samsung Galaxy S23", "256GB, Серый цвет", 100, 10)
-    product2 = Product("Iphone 15", "512GB, Gray space", 200, 2)
-
-    # Ожидаемый результат сложения
-    expected_total_price = 100 * 10 + 200 * 2  # 1400
-
-    # Проверка сложения продуктов
-    assert product1 + product2 == expected_total_price
+if __name__ == "__main__":
+    unittest.main()
