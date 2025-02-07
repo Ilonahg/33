@@ -64,7 +64,17 @@ class TestCategory(unittest.TestCase):
     def test_add_invalid_product(self):
         category = Category("Категория 1", "Описание категории", [])
         with self.assertRaises(TypeError):
-            category.add_product("Не продукт")  # Попытка добавить строку вместо объекта Product
+            category.add_product("Invalid Product")
+
+    def test_average_price(self):
+        p1 = Product("Товар 1", "Описание 1", 100, 10)
+        p2 = Product("Товар 2", "Описание 2", 200, 5)
+        category = Category("Категория 1", "Описание категории", [p1, p2])
+        self.assertEqual(category.average_price(), 150)  # (100 + 200) / 2 = 150
+
+    def test_average_price_with_no_products(self):
+        category = Category("Категория 2", "Описание категории", [])
+        self.assertEqual(category.average_price(), 0)  # Нет продуктов, должно вернуть 0
 
 
 if __name__ == "__main__":
