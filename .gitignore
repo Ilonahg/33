@@ -1,0 +1,15 @@
+# Файлы от IDE
+.idea/
+
+# Python кэшированные файлы
+__pycache__/
+*.pyc
+
+# Покрытие тестов
+.coverage
+
+# Файл зависимостей poetry
+poetry.lock
+
+builtins.pyi
+**/wait.py
