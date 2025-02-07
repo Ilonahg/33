@@ -61,3 +61,15 @@ def test_getter_products():
         "Iphone 15, 210000.0 руб. Остаток: 8 шт.\n"
     )
     assert category.products == expected_products
+
+
+def test_addition_of_products():
+    # Создаем два продукта
+    product1 = Product("Samsung Galaxy S23", "256GB, Серый цвет", 100, 10)
+    product2 = Product("Iphone 15", "512GB, Gray space", 200, 2)
+
+    # Ожидаемый результат сложения
+    expected_total_price = 100 * 10 + 200 * 2  # 1400
+
+    # Проверка сложения продуктов
+    assert product1 + product2 == expected_total_price

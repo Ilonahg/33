@@ -31,6 +31,14 @@ class Product:
         else:
             print("Количество не может быть отрицательным")
 
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        if isinstance(other, Product):
+            return self.price * self.quantity + other.price * other.quantity
+        raise TypeError("Операция поддерживается только для объектов класса Product")
+
 
 class Category:
     category_count = 0  # Количество категорий
@@ -62,6 +70,9 @@ class Category:
     def products(self):
         """Геттер для списка продуктов."""
         return "\n".join(
-            [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт."
-             for product in self._products]
+            [str(product) for product in self._products]
         ) + "\n"  # Добавляем '\n' в конце
+
+    def __str__(self):
+        total_quantity = sum(product.quantity for product in self._products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
