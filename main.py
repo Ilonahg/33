@@ -7,8 +7,8 @@ class BaseProduct(ABC):
     def __init__(self, name: str, description: str, price: float, quantity: int):
         self.name = name
         self.description = description
-        self._price = price
-        self._quantity = quantity
+        self.__price = price  # Изменил на приватный атрибут
+        self.__quantity = quantity  # Изменил на приватный атрибут
 
     @abstractmethod
     def product_info(self):
@@ -31,23 +31,23 @@ class Product(PrinterMixin, BaseProduct):
 
     @property
     def price(self):
-        return self._price
+        return self.__price  # Теперь доступ к приватному атрибуту
 
     @price.setter
     def price(self, value):
         if value > 0:
-            self._price = value
+            self.__price = value  # Изменил на приватный атрибут
         else:
             raise ValueError("Цена не должна быть нулевая или отрицательная")
 
     @property
     def quantity(self):
-        return self._quantity
+        return self.__quantity  # Теперь доступ к приватному атрибуту
 
     @quantity.setter
     def quantity(self, value):
         if value >= 0:
-            self._quantity = value
+            self.__quantity = value  # Изменил на приватный атрибут
         else:
             raise ValueError("Количество не может быть отрицательным")
 
