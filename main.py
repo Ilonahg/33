@@ -4,13 +4,6 @@ from abc import ABC, abstractmethod
 # Абстрактный класс BaseProduct
 class BaseProduct(ABC):
     @abstractmethod
-    def __init__(self, name: str, description: str, price: float, quantity: int):
-        self.name = name
-        self.description = description
-        self._price = price
-        self._quantity = quantity
-
-    @abstractmethod
     def product_info(self):
         pass
 
@@ -19,7 +12,10 @@ class BaseProduct(ABC):
 class PrinterMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        print(f"Создан объект класса {self.__class__.__name__} с параметрами {args}, {kwargs}")
+        print(repr(self))
+
+    def __repr__(self):
+        return f"Создан объект класса {self.__class__.__name__} с параметрами {self.__dict__}"
 
 
 # Класс Product, который наследует BaseProduct и PrinterMixin
@@ -27,27 +23,31 @@ class Product(PrinterMixin, BaseProduct):
     def __init__(self, name: str, description: str, price: float, quantity: int):
         if quantity == 0:
             raise ValueError("Товар с нулевым количеством не может быть добавлен")
-        super().__init__(name, description, price, quantity)
+        self.name = name
+        self.description = description
+        self.__price = price  # Приватный атрибут
+        self.__quantity = quantity  # Приватный атрибут
+        super().__init__()  # Вызов конструктора PrinterMixin
 
     @property
     def price(self):
-        return self._price
+        return self.__price  # Теперь доступ к приватному атрибуту
 
     @price.setter
     def price(self, value):
         if value > 0:
-            self._price = value
+            self.__price = value  # Приватный атрибут
         else:
             raise ValueError("Цена не должна быть нулевая или отрицательная")
 
     @property
     def quantity(self):
-        return self._quantity
+        return self.__quantity  # Приватный атрибут
 
     @quantity.setter
     def quantity(self, value):
         if value >= 0:
-            self._quantity = value
+            self.__quantity = value  # Приватный атрибут
         else:
             raise ValueError("Количество не может быть отрицательным")
 
@@ -118,7 +118,10 @@ class Category:
 
     # Добавление метода для вычисления средней цены
     def average_price(self):
-        if len(self.__products) == 0:
-            return 0
-        total_price = sum(product.price for product in self.__products)
-        return total_price / len(self.__products)
+        try:
+            if len(self.__products) == 0:
+                return 0
+            total_price = sum(product.price for product in self.__products)
+            return total_price / len(self.__products)
+        except ZeroDivisionError:
+            return 0  # Возвращаем 0, если сумма всех товаров делится на ноль

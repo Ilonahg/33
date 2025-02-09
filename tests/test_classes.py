@@ -26,6 +26,10 @@ class TestProduct(unittest.TestCase):
         with self.assertRaises(ValueError):
             p.quantity = -5
 
+    def test_product_creation_with_zero_quantity(self):
+        with self.assertRaises(ValueError):
+            Product("Товар с нулевым количеством", "Описание товара", 100, 0)
+
     def test_product_addition(self):
         p1 = Product("Товар 1", "Описание 1", 100, 10)
         p2 = Product("Товар 2", "Описание 2", 200, 5)
