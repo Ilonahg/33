@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 # Абстрактный класс BaseProduct
 class BaseProduct(ABC):
     @abstractmethod
@@ -9,6 +10,10 @@ class BaseProduct(ABC):
 
 # Миксин для вывода информации
 class PrinterMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(repr(self))
+
     def __repr__(self):
         return f"Создан объект класса {self.__class__.__name__} с параметрами {self.__dict__}"
 
@@ -22,6 +27,7 @@ class Product(PrinterMixin, BaseProduct):
         self.description = description
         self.__price = price  # Приватный атрибут
         self.__quantity = quantity  # Приватный атрибут
+        super().__init__()  # Вызов конструктора PrinterMixin
 
     @property
     def price(self):
